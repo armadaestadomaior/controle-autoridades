@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Autoridades — Acesso ao Sistema</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #0f172a;
+    }
+    .portal {
+      width: 100%;
+      max-width: 720px;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+    .topo {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .topo h1 {
+      font-size: 1.45rem;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .topo p {
+      font-size: 0.92rem;
+      color: #64748b;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 18px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #f8fafc;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+    }
+    .card-titulo {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .badge-aberto { background: #dcfce7; color: #166534; }
+    .badge-pin { background: #fef3c7; color: #92400e; }
+    .badge-admin { background: #fee2e2; color: #991b1b; }
+    .card-desc {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.4;
+    }
+    .rodape {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <main class="portal">
+    <header class="topo">
+      <h1>Controle de Entrada de Autoridades</h1>
+      <p>Selecione o módulo que deseja acessar</p>
+    </header>
+
+    <section class="grid">
+      <a class="card" data-pagina="visualizacao" href="#">
+        <div class="card-titulo">
+          <span>👁️ Visualização</span>
+          <span class="badge badge-aberto">Painel</span>
+        </div>
+        <div class="card-desc">Acompanhamento em tempo real das chegadas e setores.</div>
+      </a>
+
+      <a class="card" data-pagina="recepcao" href="#">
+        <div class="card-titulo">
+          <span>🛡️ Recepção / Portaria</span>
+          <span class="badge badge-pin">PIN</span>
+        </div>
+        <div class="card-desc">Registrar chegadas, desfazer ou cancelar visitas na entrada.</div>
+      </a>
+
+      <a class="card" data-pagina="relatorio" href="#">
+        <div class="card-titulo">
+          <span>📋 Consulta de Campos</span>
+          <span class="badge badge-pin">PIN</span>
+        </div>
+        <div class="card-desc">Escolher colunas visíveis (telefone, veículo, e-mail, etc.) e exportar CSV.</div>
+      </a>
+
+      <a class="card" data-pagina="convites" href="#">
+        <div class="card-titulo">
+          <span>✉️ Gerador de Convites</span>
+          <span class="badge badge-admin">Admin</span>
+        </div>
+        <div class="card-desc">Gerar convites em PNG com molde e enviar por e-mail.</div>
+      </a>
+    </section>
+
+    <footer class="rodape">
+      Acesso protegido por PIN no servidor do sistema.
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      // Se um dia você criar uma nova implantação e o link /exec mudar, atualize só esta linha:
+      var BASE_URL = 'https://script.google.com/macros/s/AKfycbwcNRmsZ3C5T4yKV1iIamD0K02QWrIkusd5QZf-pYCW8pXLAWopto-kTDAwDpIzipw/exec';
+
+      function montarUrl(pagina) {
+        if (!pagina || pagina === 'visualizacao') return BASE_URL;
+        return BASE_URL + '?pagina=' + encodeURIComponent(pagina);
+      }
+
+      // Bônus: permite atalho direto como ?p=recepcao, ?p=relatorio ou ?p=convites
+      var params = new URLSearchParams(window.location.search);
+      var atalho = (params.get('p') || '').trim().toLowerCase();
+      if (['visualizacao', 'recepcao', 'relatorio', 'convites'].indexOf(atalho) !== -1) {
+        window.location.replace(montarUrl(atalho));
+        return;
+      }
+
+      document.querySelectorAll('a.card[data-pagina]').forEach(function (link) {
+        link.href = montarUrl(link.getAttribute('data-pagina'));
+      });
+    })();
+  </script>
+</body>
+</html>
